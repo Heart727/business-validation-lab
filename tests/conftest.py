@@ -21,7 +21,30 @@ def settings():
 
 
 @pytest.fixture
-def scenario():
+def scenario(scenario_catalog):
+    return scenario_catalog.all()[0]
+
+
+@pytest.fixture
+def scenario_catalog():
     from app.services.scenarios import ScenarioCatalog
 
-    return ScenarioCatalog.load(Path("data/scenarios.json")).all()[0]
+    return ScenarioCatalog.load(Path(__file__).resolve().parents[1] / "data" / "scenarios.json")
+
+
+@pytest.fixture
+def full_mock_stack(settings, scenario_catalog):
+    from app.main import create_app
+    from app.services.pipeline import PipelineService
+    from tests.fakes import DeterministicDify, InMemoryFeishu
+
+    feishu = InMemoryFeishu()
+    dify = DeterministicDify()
+    feishu.events = dify.events
+    pipeline = PipelineService(feishu=feishu, dify=dify, scenarios=scenario_catalog)
+    app = create_app(
+        settings=settings.model_copy(update={"demo_mode": True}),
+        pipeline=pipeline,
+        scenarios=scenario_catalog,
+    )
+    return app, scenario_catalog, feishu, dify
