@@ -69,6 +69,7 @@ def test_failure_guide_documents_input_output_recovery_and_limits():
     for code in (
         "unknown_scenario", "dify_timeout", "dify_invalid_output", "feishu_auth_failed",
         "feishu_lookup_failed", "feishu_create_failed", "feishu_update_failed",
+        "feishu_invalid_response",
     ):
         assert code in failures
     for label in ("输入", "用户看到", "恢复", "限制"):
@@ -78,6 +79,7 @@ def test_failure_guide_documents_input_output_recovery_and_limits():
     assert "实时 AI 已验证" not in case_study
     assert "feishu_auth_failed` 仅表示租户令牌获取失败" in failures
     assert "feishu_update_failed` 无法确认最终记录状态" in failures
+    assert "feishu_invalid_response` 用于飞书返回内容不可解析或结构不符" in failures
     assert "手机端截图显示静态预览标记和分析结果" in case_study
 
 
