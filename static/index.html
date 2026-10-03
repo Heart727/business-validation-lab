@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f3f1e9">
+    <meta name="description" content="用虚构商家样例体验 AI 经营分析与 7 天验证流程。">
+    <title>经营验证工作台 · AI 经营分析</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <script src="/static/app.js" defer></script>
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="site-header">
+        <a class="brand" href="/" aria-label="经营验证工作台首页">
+          <span class="brand-mark" aria-hidden="true">V</span>
+          <span class="brand-copy">
+            <strong>经营验证工作台</strong>
+            <small>AI BUSINESS VALIDATION</small>
+          </span>
+        </a>
+        <div class="header-meta">
+          <span class="header-dot" aria-hidden="true"></span>
+          <span>样例沙盒</span>
+          <span class="header-divider" aria-hidden="true"></span>
+          <span>无需登录</span>
+        </div>
+      </header>
+
+      <main>
+        <section class="hero" aria-labelledby="page-title">
+          <div class="hero-copy">
+            <p class="eyebrow"><span>FIELD NOTES 01</span> / 经营问题验证</p>
+            <h1 id="page-title">先别急着下结论，<br><em>跑一个小实验。</em></h1>
+            <p class="hero-intro">
+              选一份虚构商家资料，让 AI 把经营目标拆成 7 天可执行、可记录、可判断的验证计划。
+            </p>
+            <div class="hero-tags" aria-label="演示特点">
+              <span>10 个虚构样例</span>
+              <span>7 天验证动作</span>
+              <span>不收集个人信息</span>
+            </div>
+          </div>
+          <aside class="rhythm-card" aria-label="七天验证流程">
+            <div class="rhythm-topline">
+              <span>THE VALIDATION LOOP</span>
+              <span class="rhythm-index">01—07</span>
+            </div>
+            <div class="rhythm-title"><strong>从问题</strong><span>到证据</span></div>
+            <ol class="rhythm-steps">
+              <li><span class="step-number">01</span><span>记录真实基线</span><span class="step-line"></span></li>
+              <li><span class="step-number">02</span><span>执行小步测试</span><span class="step-line"></span></li>
+              <li><span class="step-number">03</span><span>按数据做判断</span><span class="step-line"></span></li>
+            </ol>
+            <p class="rhythm-caption">不是经营建议书，是一份可以开始验证的工作清单。</p>
+          </aside>
+        </section>
+
+        <section class="workspace" aria-label="选择经营样例并查看分析">
+          <section class="sample-panel" aria-labelledby="samples-title">
+            <div class="section-kicker"><span>01 / SAMPLE</span><span id="scenario-count">读取样例中</span></div>
+            <div class="panel-heading">
+              <div>
+                <h2 id="samples-title">选择一个经营现场</h2>
+                <p>只使用预置资料，不需要填写客户信息。</p>
+              </div>
+              <span class="heading-stamp" aria-hidden="true">10<br>例</span>
+            </div>
+            <div id="scenario-list" class="scenario-list" aria-label="虚构经营场景"></div>
+            <section class="selected-scenario" aria-labelledby="selected-title">
+              <div class="selected-topline">
+                <span class="mini-label">当前样例</span>
+                <span id="selected-industry" class="industry-chip">等待加载</span>
+              </div>
+              <h3 id="selected-title">正在读取样例…</h3>
+              <dl class="scenario-facts">
+                <div><dt>样例内容</dt><dd id="selected-goal">—</dd></div>
+                <div><dt>提交字段</dt><dd id="selected-metrics">—</dd></div>
+                <div><dt>资料边界</dt><dd id="selected-budget">—</dd></div>
+              </dl>
+            </section>
+            <p class="privacy-note">
+              <span class="privacy-icon" aria-hidden="true">i</span>
+              <span>演示只接受这 10 份虚构样例。请勿提交真实姓名、电话、邮箱或客户资料。</span>
+            </p>
+          </section>
+
+          <section class="result-panel" aria-labelledby="result-title">
+            <div class="result-topline">
+              <div class="section-kicker"><span>02 / ANALYSIS</span><span>经营分析卡</span></div>
+              <span id="mode-badge" class="mode-badge mode-loading">正在检查</span>
+            </div>
+            <div class="result-heading">
+              <div>
+                <p id="result-eyebrow" class="mini-label">经营问题 · 待开始</p>
+                <h2 id="result-title">一周验证计划</h2>
+              </div>
+              <div class="seven-mark" aria-label="七天行动计划"><strong>7</strong><span>DAYS</span></div>
+            </div>
+            <p id="status-message" class="status-message" role="status" aria-live="polite">
+              正在准备样例；静态预览，未执行实时分析。
+            </p>
+            <div id="result-content" class="result-content" aria-live="polite"></div>
+            <div class="run-controls">
+              <div class="run-actions">
+                <button id="run-button" class="primary-button" type="button" disabled>
+                  检查实时服务… <span aria-hidden="true">↗</span>
+                </button>
+                <button id="retry-button" class="secondary-button" type="button" hidden>
+                  用相同样例重试 <span aria-hidden="true">↻</span>
+                </button>
+                <button id="new-sample-button" class="text-button" type="button" hidden>
+                  放弃本次并换样例
+                </button>
+              </div>
+              <p id="quota-note" class="quota-note">
+                实时分析会调用 AI 并写入专用 DEMO 表，可能消耗 DeepSeek API 额度。
+              </p>
+            </div>
+          </section>
+        </section>
+
+        <section class="method-strip" aria-label="验证原则">
+          <span class="method-label">方法说明</span>
+          <p>把<strong>已知证据</strong>、<strong>待验证推断</strong>与<strong>缺失信息</strong>分开，再用一周行动建立下一步判断依据。</p>
+          <span class="fictional-stamp">全部资料为虚构</span>
+        </section>
+      </main>
+
+      <footer class="site-footer">
+        <span>经营验证工作台 <span class="footer-separator">/</span> 项目演示</span>
+        <span>AI 输出用于展示流程，不构成经营或财务保证。</span>
+      </footer>
+    </div>
+  </body>
+</html>
