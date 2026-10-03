@@ -8,10 +8,14 @@ def test_public_page_and_local_assets_are_served(full_mock_stack):
         page = client.get("/")
         stylesheet = client.get("/static/styles.css")
         script = client.get("/static/app.js")
+        observation_script = client.get("/static/observations.js")
 
     assert page.status_code == 200
     assert stylesheet.status_code == 200
     assert script.status_code == 200
+    assert observation_script.status_code == 200
+    assert 'src="/static/observations.js" defer></script>' in page.text
+    assert page.text.index('observations.js" defer') < page.text.index('app.js" defer')
 
 
 def test_page_is_chinese_mobile_first_and_privacy_safe(full_mock_stack):

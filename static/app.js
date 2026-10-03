@@ -105,20 +105,13 @@ function selectScenario(scenarioId) {
 function renderObservationCards(observations) {
   const grid = makeNode("div", "observation-grid");
   const labels = ["证据", "推断", "缺失信息"];
-  const grouped = new Map();
-  for (const label of labels) grouped.set(label, "");
-
-  for (const value of observations || []) {
-    const text = String(value);
-    const match = text.match(/^(证据|推断|缺失信息)[：:](.*)$/s);
-    if (match && grouped.has(match[1])) grouped.set(match[1], match[2].trim());
-  }
+  const grouped = groupObservations(observations);
 
   labels.forEach((label) => {
     const card = makeNode("article", "observation-card");
     card.dataset.kind = label;
     card.append(makeNode("span", "block-label", label));
-    card.append(makeNode("p", "", grouped.get(label) || "暂无相关内容。"));
+    card.append(makeNode("p", "", grouped[label] || "暂无相关内容。"));
     grid.append(card);
   });
   return grid;
