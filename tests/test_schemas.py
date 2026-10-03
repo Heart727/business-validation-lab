@@ -70,6 +70,17 @@ def test_observations_require_evidence_inference_and_missing_information(removed
         AnalysisOutput.model_validate(payload)
 
 
+@pytest.mark.parametrize("empty_label", ["证据", "推断", "缺失信息"])
+def test_observation_labels_require_nonblank_content(empty_label):
+    payload = valid_output()
+    payload["observations"] = [
+        f"{empty_label}：   " if item.startswith(f"{empty_label}：") else item
+        for item in payload["observations"]
+    ]
+    with pytest.raises(ValidationError, match="evidence, inference, and missing information"):
+        AnalysisOutput.model_validate(payload)
+
+
 @pytest.mark.parametrize("day", [0, 8])
 def test_action_day_outside_week_is_rejected(day):
     with pytest.raises(ValidationError):

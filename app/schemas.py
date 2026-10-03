@@ -44,12 +44,16 @@ class AnalysisOutput(BaseModel):
 
     @model_validator(mode="after")
     def require_separated_observations(self):
-        present = {
-            label
-            for observation in self.observations
-            for label in _OBSERVATION_LABELS
-            if observation.lstrip().startswith((f"{label}：", f"{label}:"))
-        }
+        present = set()
+        for observation in self.observations:
+            text = observation.lstrip()
+            for label in _OBSERVATION_LABELS:
+                prefix = next(
+                    (candidate for candidate in (f"{label}：", f"{label}:") if text.startswith(candidate)),
+                    None,
+                )
+                if prefix and text[len(prefix):].strip():
+                    present.add(label)
         if present != _OBSERVATION_LABELS:
             raise ValueError("observations must separate evidence, inference, and missing information")
         return self
