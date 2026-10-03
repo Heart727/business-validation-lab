@@ -1,4 +1,5 @@
 from typing import Literal
+from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
@@ -80,3 +81,10 @@ class PipelineResult(BaseModel):
         if self.status == "processing" and (self.analysis is not None or self.error_code is not None):
             raise ValueError("processing results cannot contain analysis or an error")
         return self
+
+
+class ScenarioRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    scenario_id: str = Field(min_length=1, max_length=80)
+    request_id: UUID
