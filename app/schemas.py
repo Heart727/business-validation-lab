@@ -1,3 +1,5 @@
+from typing import Literal
+
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 
@@ -56,4 +58,25 @@ class AnalysisOutput(BaseModel):
                     present.add(label)
         if present != _OBSERVATION_LABELS:
             raise ValueError("observations must separate evidence, inference, and missing information")
+        return self
+
+
+class PipelineResult(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    request_id: str = Field(min_length=1)
+    status: Literal["processing", "completed", "retryable_failed"]
+    analysis: AnalysisOutput | None = None
+    error_code: str | None = None
+
+    @model_validator(mode="after")
+    def validate_state_payload(self):
+        if self.status == "completed" and (self.analysis is None or self.error_code is not None):
+            raise ValueError("completed results require analysis and cannot contain an error")
+        if self.status == "retryable_failed" and (
+            self.analysis is not None or not self.error_code
+        ):
+            raise ValueError("retryable failures require an error code and cannot contain analysis")
+        if self.status == "processing" and (self.analysis is not None or self.error_code is not None):
+            raise ValueError("processing results cannot contain analysis or an error")
         return self
