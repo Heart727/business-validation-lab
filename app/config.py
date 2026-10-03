@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     feishu_app_secret: str | None = Field(default=None, repr=False)
     feishu_app_token: str | None = Field(default=None, repr=False)
     feishu_table_id: str | None = Field(default=None, repr=False)
+    feishu_base_url: str = "https://open.feishu.cn"
     dify_base_url: str = "https://api.dify.ai/v1"
     dify_workflow_api_key: str | None = Field(default=None, repr=False)
 
