@@ -66,13 +66,19 @@ def test_failure_guide_documents_input_output_recovery_and_limits():
     failures = read_project_file("docs/failure-cases.md")
     case_study = read_project_file("docs/case-study.md")
 
-    for code in ("unknown_scenario", "dify_timeout", "dify_invalid_output", "feishu_auth_failed", "feishu_update_failed"):
+    for code in (
+        "unknown_scenario", "dify_timeout", "dify_invalid_output", "feishu_auth_failed",
+        "feishu_lookup_failed", "feishu_create_failed", "feishu_update_failed",
+    ):
         assert code in failures
     for label in ("输入", "用户看到", "恢复", "限制"):
         assert label in failures
     assert "流程" in case_study and "验证" in case_study
     assert "静态" in case_study
     assert "实时 AI 已验证" not in case_study
+    assert "feishu_auth_failed` 仅表示租户令牌获取失败" in failures
+    assert "feishu_update_failed` 无法确认最终记录状态" in failures
+    assert "手机端截图显示静态预览标记和分析结果" in case_study
 
 
 def test_vercel_entry_and_static_screenshots_are_present():

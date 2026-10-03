@@ -30,6 +30,8 @@ flowchart LR
 
 ![静态预览 - 桌面端](screenshots/static-preview-desktop.png)
 
+手机端截图显示静态预览标记和分析结果。
+
 ![静态预览 - 手机端](screenshots/static-preview-mobile.png)
 
 ## 部署状态与限制
