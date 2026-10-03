@@ -1,6 +1,9 @@
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 
+_OBSERVATION_LABELS = frozenset({"证据", "推断", "缺失信息"})
+
+
 class Scenario(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
@@ -37,4 +40,16 @@ class AnalysisOutput(BaseModel):
     def require_seven_distinct_days(self):
         if sorted(item.day for item in self.seven_day_actions) != list(range(1, 8)):
             raise ValueError("seven_day_actions must contain days 1 through 7 once")
+        return self
+
+    @model_validator(mode="after")
+    def require_separated_observations(self):
+        present = {
+            label
+            for observation in self.observations
+            for label in _OBSERVATION_LABELS
+            if observation.lstrip().startswith((f"{label}：", f"{label}:"))
+        }
+        if present != _OBSERVATION_LABELS:
+            raise ValueError("observations must separate evidence, inference, and missing information")
         return self

@@ -1,3 +1,4 @@
+import asyncio
 import json
 import traceback
 
@@ -6,6 +7,7 @@ import pytest
 import pytest_asyncio
 
 from app.schemas import AnalysisOutput
+from app.services import dify as dify_module
 from app.services.dify import DifyClient, DifyError
 from tests.conftest import REQUEST_ID
 from tests.test_schemas import valid_output
@@ -103,12 +105,34 @@ async def test_transport_failures_are_safe_codes(settings, scenario, failure, co
 @pytest.mark.parametrize("response", [
     httpx.Response(200, text="sensitive-upstream-body"),
     httpx.Response(200, json={"data": {"outputs": {}}}),
-    httpx.Response(200, json={"data": {"status": "failed", "outputs": {"analysis_json": "{}"}}}),
     httpx.Response(200, json={"data": {"outputs": {"analysis_json": {}}}}),
 ])
 async def test_malformed_blocking_response_is_invalid_output(settings, scenario, response):
     async with httpx.AsyncClient(transport=httpx.MockTransport(lambda request: response)) as http_client:
         with pytest.raises(DifyError, match="^dify_invalid_output$"):
+            await DifyClient(settings, http_client).run_workflow(scenario, REQUEST_ID)
+
+
+@pytest.mark.asyncio
+async def test_failed_workflow_is_upstream_failure(settings, scenario):
+    response = httpx.Response(200, json={
+        "data": {"status": "failed", "outputs": {"analysis_json": "{}"}}
+    })
+    async with httpx.AsyncClient(transport=httpx.MockTransport(lambda request: response)) as http_client:
+        with pytest.raises(DifyError, match="^dify_upstream_failed$"):
+            await DifyClient(settings, http_client).run_workflow(scenario, REQUEST_ID)
+
+
+@pytest.mark.asyncio
+async def test_total_workflow_timeout_is_enforced(settings, scenario, monkeypatch):
+    monkeypatch.setattr(dify_module, "DIFY_REQUEST_TIMEOUT_SECONDS", 0.01, raising=False)
+
+    async def slow_response(request):
+        await asyncio.sleep(0.05)
+        return blocking_response()
+
+    async with httpx.AsyncClient(transport=httpx.MockTransport(slow_response)) as http_client:
+        with pytest.raises(DifyError, match="^dify_timeout$"):
             await DifyClient(settings, http_client).run_workflow(scenario, REQUEST_ID)
 
 

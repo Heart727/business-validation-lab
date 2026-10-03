@@ -1,10 +1,15 @@
 """Blocking Dify workflow client with application-safe failures."""
 
+import asyncio
+
 import httpx
 from pydantic import ValidationError
 
 from app.config import Settings
 from app.schemas import AnalysisOutput, Scenario
+
+
+DIFY_REQUEST_TIMEOUT_SECONDS = 30.0
 
 
 class DifyError(Exception):
@@ -26,17 +31,20 @@ class DifyClient:
             raise DifyError("dify_upstream_failed")
 
         try:
-            response = await self.http_client.post(
-                f"{self.settings.dify_base_url.rstrip('/')}/workflows/run",
-                headers={"Authorization": f"Bearer {api_key}"},
-                json={
-                    "response_mode": "blocking",
-                    "user": request_id,
-                    "inputs": {"scenario_json": scenario.model_dump_json()},
-                },
-                timeout=30.0,
-                follow_redirects=False,
-            )
+            async with asyncio.timeout(DIFY_REQUEST_TIMEOUT_SECONDS):
+                response = await self.http_client.post(
+                    f"{self.settings.dify_base_url.rstrip('/')}/workflows/run",
+                    headers={"Authorization": f"Bearer {api_key}"},
+                    json={
+                        "response_mode": "blocking",
+                        "user": request_id,
+                        "inputs": {"scenario_json": scenario.model_dump_json()},
+                    },
+                    timeout=DIFY_REQUEST_TIMEOUT_SECONDS,
+                    follow_redirects=False,
+                )
+        except TimeoutError:
+            raise DifyError("dify_timeout") from None
         except httpx.TimeoutException:
             raise DifyError("dify_timeout") from None
         except httpx.RequestError:
@@ -50,8 +58,11 @@ class DifyClient:
         try:
             payload = response.json()
             data = payload["data"]
-            if data.get("status") != "succeeded":
-                raise ValueError("Workflow did not succeed")
+            status = data.get("status")
+            if not isinstance(status, str):
+                raise ValueError("Missing workflow status")
+            if status != "succeeded":
+                raise DifyError("dify_upstream_failed")
             analysis_json = data["outputs"]["analysis_json"]
             if not isinstance(analysis_json, str):
                 raise ValueError("Invalid analysis output type")

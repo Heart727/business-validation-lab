@@ -24,7 +24,11 @@ def isolated_config(tmp_path, monkeypatch):
 def valid_output():
     return {
         "executive_summary": "虚构样例的离线分析预览",
-        "observations": ["样例数据仅用于演示"],
+        "observations": [
+            "证据：输入明确提供了虚构样例数据。",
+            "推断：当前问题可能与客户触达方式有关，需要验证。",
+            "缺失信息：尚无按渠道拆分的询单基线。",
+        ],
         "risks": [],
         "seven_day_actions": [
             {"day": day, "action": "记录需求", "metric": "询单数", "decision_rule": "若无询单则调整展示"}
@@ -52,6 +56,17 @@ def test_duplicate_day_is_rejected():
     payload = valid_output()
     payload["seven_day_actions"][6]["day"] = 1
     with pytest.raises(ValidationError, match="days 1 through 7 once"):
+        AnalysisOutput.model_validate(payload)
+
+
+@pytest.mark.parametrize("removed_label", ["证据", "推断", "缺失信息"])
+def test_observations_require_evidence_inference_and_missing_information(removed_label):
+    payload = valid_output()
+    payload["observations"] = [
+        item for item in payload["observations"]
+        if not item.startswith(f"{removed_label}：")
+    ]
+    with pytest.raises(ValidationError, match="evidence, inference, and missing information"):
         AnalysisOutput.model_validate(payload)
 
 
