@@ -56,7 +56,7 @@ async def test_create_uses_configured_table_and_fixed_scenario_fields(settings, 
 async def test_create_rejects_record_that_is_not_processing(settings, scenario):
     def handler(request):
         fields = json.loads(request.content)["fields"]
-        fields["处理状态"] = "failed"
+        fields["处理状态"] = "retryable_failed"
         return httpx.Response(200, json={"code": 0, "data": {"record": {"record_id": "rec-1", "fields": fields}}})
 
     async with mock_client(handler) as http_client:
@@ -94,6 +94,20 @@ async def test_find_uses_encoded_filter_and_escapes_request_id(settings):
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize("status", ["retryable_failed", "failed"])
+async def test_find_accepts_only_runtime_failure_status(settings, status):
+    item = {"record_id": "rec-1", "fields": {"请求ID": REQUEST_ID, "处理状态": status}}
+    async with mock_client(lambda request: httpx.Response(200, json={"code": 0, "data": {"items": [item], "has_more": False}})) as http_client:
+        client = FeishuClient(settings, http_client)
+        if status == "failed":
+            with pytest.raises(FeishuError, match="^feishu_invalid_response$"):
+                await client.find_by_request_id(TOKEN, REQUEST_ID)
+        else:
+            record = await client.find_by_request_id(TOKEN, REQUEST_ID)
+            assert record.status == "retryable_failed"
+
+
+@pytest.mark.asyncio
 async def test_find_rejects_duplicate_or_truncated_results(settings):
     for items, has_more, code in [
         ([{"record_id": "one", "fields": {"请求ID": REQUEST_ID, "处理状态": "processing"}}] * 2, False, "feishu_duplicate_request_id"),
@@ -110,11 +124,36 @@ async def test_update_uses_authorization_and_configured_table(settings):
     def handler(request):
         assert request.method == "PUT" and request.url.path == BASE + "/rec-1"
         assert request.headers["Authorization"] == f"Bearer {TOKEN}"
-        assert json.loads(request.content) == {"fields": {"处理状态": "completed"}}
+        assert json.loads(request.content) == {"fields": {"处理状态": "completed", "演示标记": "DEMO"}}
         return httpx.Response(200, json={"code": 0, "data": {"record": {"record_id": "rec-1"}}})
 
     async with mock_client(handler) as http_client:
         await FeishuClient(settings, http_client).update_record(TOKEN, "rec-1", {"处理状态": "completed"})
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("fields", [
+    {"处理状态": "failed"}, {"处理状态": "unknown"}, {"处理状态": None},
+    {"演示标记": "LIVE"}, {"演示标记": "DEMO"}, {"演示标记": None},
+    {"请求ID": "other"}, {"风险": "not a list"},
+])
+async def test_update_rejects_invalid_fields_before_request(settings, fields):
+    def handler(request):
+        pytest.fail("Invalid update reached Feishu")
+
+    async with mock_client(handler) as http_client:
+        with pytest.raises(FeishuError, match="^feishu_update_failed$"):
+            await FeishuClient(settings, http_client).update_record(TOKEN, "rec-1", fields)
+
+
+@pytest.mark.asyncio
+async def test_update_keeps_demo_marker_for_valid_retryable_failure(settings):
+    def handler(request):
+        assert json.loads(request.content) == {"fields": {"处理状态": "retryable_failed", "错误码": "dify_timeout", "演示标记": "DEMO"}}
+        return httpx.Response(200, json={"code": 0, "data": {"record": {"record_id": "rec-1"}}})
+
+    async with mock_client(handler) as http_client:
+        await FeishuClient(settings, http_client).update_record(TOKEN, "rec-1", {"处理状态": "retryable_failed", "错误码": "dify_timeout"})
 
 
 @pytest.mark.asyncio
@@ -146,7 +185,7 @@ async def test_record_nonzero_code_is_sanitized(settings, scenario, method, expe
             elif method == "find":
                 await client.find_by_request_id(TOKEN, REQUEST_ID)
             else:
-                await client.update_record(TOKEN, "rec-1", {"处理状态": "failed"})
+                await client.update_record(TOKEN, "rec-1", {"处理状态": "retryable_failed"})
     assert error.value.code == expected
     assert "private upstream text" not in str(error.value)
 
@@ -166,7 +205,7 @@ async def invoke(client, method, scenario):
         return await client.create_processing_record(TOKEN, REQUEST_ID, scenario)
     if method == "find":
         return await client.find_by_request_id(TOKEN, REQUEST_ID)
-    return await client.update_record(TOKEN, "rec-1", {"处理状态": "failed"})
+    return await client.update_record(TOKEN, "rec-1", {"处理状态": "retryable_failed"})
 
 
 @pytest.mark.asyncio

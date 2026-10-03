@@ -11,6 +11,12 @@ from app.config import Settings
 from app.schemas import AnalysisOutput, Scenario
 
 
+_RUNTIME_STATUSES = frozenset({"processing", "completed", "retryable_failed"})
+_UPDATE_LIST_FIELDS = frozenset({"关键观察", "风险", "7天验证动作"})
+_UPDATE_TEXT_FIELDS = frozenset({"经营摘要", "错误码"})
+_UPDATE_FIELDS = frozenset({"处理状态", *_UPDATE_LIST_FIELDS, *_UPDATE_TEXT_FIELDS})
+
+
 class FeishuError(Exception):
     """An application-safe Feishu failure code."""
 
@@ -61,7 +67,7 @@ def _record(item: object, request_id: str) -> FeishuRecord:
     if fields.get("请求ID") != request_id:
         raise _invalid()
     status = _text(fields.get("处理状态"))
-    if status not in {"processing", "completed", "failed"}:
+    if status not in _RUNTIME_STATUSES:
         raise _invalid()
     analysis = None
     if status == "completed":
@@ -168,10 +174,20 @@ class FeishuClient:
     async def update_record(self, token: str, record_id: str, fields: dict[str, object]) -> None:
         error_code = "feishu_update_failed"
         path = self._records_path(error_code)
-        if not record_id:
+        if not record_id or not isinstance(fields, dict) or not fields or set(fields) - _UPDATE_FIELDS:
             raise FeishuError(error_code)
-        serialized = {key: json.dumps(value, ensure_ascii=False) if isinstance(value, list) else value
-                      for key, value in fields.items()}
+        status = fields.get("处理状态")
+        if "处理状态" in fields and (not isinstance(status, str) or status not in _RUNTIME_STATUSES):
+            raise FeishuError(error_code)
+        if any(not isinstance(fields[key], list) for key in _UPDATE_LIST_FIELDS.intersection(fields)):
+            raise FeishuError(error_code)
+        if any(not isinstance(fields[key], str) for key in _UPDATE_TEXT_FIELDS.intersection(fields)):
+            raise FeishuError(error_code)
+        serialized = {
+            key: json.dumps(value, ensure_ascii=False) if key in _UPDATE_LIST_FIELDS else value
+            for key, value in fields.items()
+        }
+        serialized["演示标记"] = "DEMO"
         data = _require_success(await self._request(
             "PUT", f"{path}/{quote(record_id, safe='')}", error_code,
             headers=self._headers(token, error_code), json={"fields": serialized},
