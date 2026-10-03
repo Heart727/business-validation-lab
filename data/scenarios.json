@@ -1,0 +1,122 @@
+[
+  {
+    "id": "breakfast-catering",
+    "title": "虚构样例：早餐配送工作室",
+    "industry": "早餐餐饮",
+    "offering": "办公区早餐套餐预订与配送",
+    "target_customer": "需要工作日早餐的周边小型办公室",
+    "business_problem": "工作日订单波动较大，备餐量难以确定",
+    "current_metrics": "样例数据：工作日每日订单约 15–30 单，预订占比约 20%–35%",
+    "budget_range": "样例预算：每周 300–600 元",
+    "goal": "提高提前预订占比并减少剩余餐品",
+    "time_limit": "7 天验证"
+  },
+  {
+    "id": "neighborhood-coffee",
+    "title": "虚构样例：街区咖啡店",
+    "industry": "咖啡零售",
+    "offering": "现制咖啡与简餐",
+    "target_customer": "附近通勤者与社区居民",
+    "business_problem": "下午时段到店量偏低",
+    "current_metrics": "样例数据：下午每日交易约 8–18 单，全天约 45–70 单",
+    "budget_range": "样例预算：每周 200–500 元",
+    "goal": "验证下午组合套餐是否提升交易量",
+    "time_limit": "7 天验证"
+  },
+  {
+    "id": "online-florist",
+    "title": "虚构样例：线上花店",
+    "industry": "线上花卉零售",
+    "offering": "节日与日常鲜花配送",
+    "target_customer": "有送礼或居家布置需求的本地消费者",
+    "business_problem": "浏览量有增长，但下单比例不稳定",
+    "current_metrics": "样例数据：每日商品页访问约 70–120 次，订单约 3–7 单",
+    "budget_range": "样例预算：每周 400–800 元",
+    "goal": "验证商品页信息调整是否增加下单意向",
+    "time_limit": "7 天验证"
+  },
+  {
+    "id": "personal-training",
+    "title": "虚构样例：私人训练工作室",
+    "industry": "健身服务",
+    "offering": "小班训练与体验课",
+    "target_customer": "希望开始规律锻炼的附近成年人",
+    "business_problem": "体验课报名后实际到场比例偏低",
+    "current_metrics": "样例数据：每周预约约 12–20 人，到场约 7–13 人",
+    "budget_range": "样例预算：每周 150–350 元",
+    "goal": "提高体验课到场率",
+    "time_limit": "7 天验证"
+  },
+  {
+    "id": "pet-grooming",
+    "title": "虚构样例：宠物美容店",
+    "industry": "宠物服务",
+    "offering": "犬猫洗护与基础美容",
+    "target_customer": "周边养宠家庭",
+    "business_problem": "工作日预约空档较多",
+    "current_metrics": "样例数据：工作日每日预约约 2–5 单，周末约 7–10 单",
+    "budget_range": "样例预算：每周 100–300 元",
+    "goal": "验证工作日预约提醒的效果",
+    "time_limit": "7 天验证"
+  },
+  {
+    "id": "secondhand-clothing",
+    "title": "虚构样例：二手服饰店",
+    "industry": "二手服饰零售",
+    "offering": "精选二手服饰线上展示与门店销售",
+    "target_customer": "关注预算与循环消费的年轻消费者",
+    "business_problem": "商品浏览后咨询少，库存周转较慢",
+    "current_metrics": "样例数据：每周上新约 20–35 件，售出约 8–15 件",
+    "budget_range": "样例预算：每周 100–250 元",
+    "goal": "验证尺码与成色说明是否提升咨询量",
+    "time_limit": "7 天验证"
+  },
+  {
+    "id": "tutoring-studio",
+    "title": "虚构样例：学习辅导工作室",
+    "industry": "教育服务",
+    "offering": "小组学习方法辅导",
+    "target_customer": "需要课外学习支持的家庭",
+    "business_problem": "课程咨询较多，但试听预约较少",
+    "current_metrics": "样例数据：每周咨询约 15–25 次，试听预约约 4–8 次",
+    "budget_range": "样例预算：每周 150–400 元",
+    "goal": "提高咨询到试听预约的比例",
+    "time_limit": "7 天验证"
+  },
+  {
+    "id": "wedding-planner",
+    "title": "虚构样例：婚礼策划工作室",
+    "industry": "婚礼服务",
+    "offering": "小型婚礼方案设计与执行",
+    "target_customer": "计划举办小型婚礼的新人",
+    "business_problem": "初次咨询后方案沟通周期较长",
+    "current_metrics": "样例数据：每月初询约 12–20 次，进入方案沟通约 4–7 次",
+    "budget_range": "样例预算：每周 200–500 元",
+    "goal": "验证标准化需求问卷能否缩短沟通时间",
+    "time_limit": "7 天验证"
+  },
+  {
+    "id": "commercial-cleaning",
+    "title": "虚构样例：商用清洁服务",
+    "industry": "企业清洁服务",
+    "offering": "小型办公室定期清洁",
+    "target_customer": "需要定期保洁的小型企业",
+    "business_problem": "报价后客户回复较慢，难以判断方案障碍",
+    "current_metrics": "样例数据：每月报价约 10–18 份，后续回复约 4–8 份",
+    "budget_range": "样例预算：每周 100–300 元",
+    "goal": "验证报价说明与回访节奏是否增加回复",
+    "time_limit": "7 天验证"
+  },
+  {
+    "id": "home-bakery",
+    "title": "虚构样例：家庭烘焙工作室",
+    "industry": "烘焙零售",
+    "offering": "预订制蛋糕与甜点盒",
+    "target_customer": "需要小型庆祝甜点的本地消费者",
+    "business_problem": "临时订单较多，制作排期不稳定",
+    "current_metrics": "样例数据：每周订单约 10–18 单，提前三天预订约 3–7 单",
+    "budget_range": "样例预算：每周 100–250 元",
+    "goal": "提高提前预订比例",
+    "time_limit": "7 天验证"
+  }
+]

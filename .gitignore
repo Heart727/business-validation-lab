@@ -1,1 +1,8 @@
 .worktrees/
+.venv/
+.env
+__pycache__/
+.pytest_cache/
+.vercel/
+*screenshot*.tmp
+*screenshot*.png.tmp
