@@ -2,6 +2,8 @@
 
 代码：[GitHub 项目仓库](https://github.com/Heart727/business-validation-lab)。
 
+演示：[公开静态预览](https://business-validation-lab.vercel.app/)（实时 AI 与飞书写入尚未开放）。
+
 ## 需求
 
 小商家会面对“要不要做活动、投放或调整服务”的日常决定，但常常缺少明确基线、验证指标和结束条件。本项目把一个经营问题转成一份有证据边界、风险说明与时间安排的 7 天小实验计划。

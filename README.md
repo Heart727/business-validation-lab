@@ -4,6 +4,8 @@
 
 项目仓库：[business-validation-lab](https://github.com/Heart727/business-validation-lab)。
 
+公开演示：[经营验证工作台](https://business-validation-lab.vercel.app/)（固定虚构样例的静态预览，实时 AI 与飞书写入尚未开放）。
+
 > **当前公开体验为静态预览。** 你可以浏览 10 份虚构样例和一份固定分析结果；实时 Dify、DeepSeek、飞书写入尚未配置，页面不会发起真实 AI 调用，也不会生成线上线索。
 
 ## 预览
@@ -99,7 +101,7 @@ DeepSeek 凭证配置在 Dify 的模型供应商设置里；Vercel 不需要 `DE
 
 ## 部署
 
-仓库根目录是 Vercel Root Directory。将 GitHub 仓库导入 Vercel，先不添加集成凭证，确认 `DEMO_MODE=false`，再部署。此时网站只提供公开静态预览与只读 API；不要把受保护的预览部署地址当成面试官可访问的正式链接。匿名访问核验完成后，可在此处补充正式的公开演示链接。
+仓库根目录是 Vercel Root Directory。当前已连接 GitHub 并部署到 [正式公开地址](https://business-validation-lab.vercel.app/)；匿名请求首页、静态资源和只读 API 均返回成功，`/api/health` 显示 `live_demo_enabled=false`。网站目前只提供固定样例的静态预览，实时提交返回 `demo_disabled`。配置真实集成前，保持 `DEMO_MODE=false`。
 
 Vercel Python Runtime 文档列出 Python 3.12、3.13、3.14；本地可用版本由本机环境决定。
 
