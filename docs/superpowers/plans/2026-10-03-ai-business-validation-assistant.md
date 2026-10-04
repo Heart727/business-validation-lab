@@ -542,7 +542,7 @@ Expected: tests and compile pass; diff has no whitespace errors; secret scan exi
 
 - [ ] **Step 6: Stage and commit the verified application and deployment instructions.** Run `git add vercel.json README.md docs .env.example .gitignore tests/test_docs.py`, then `git diff --cached --check`, then `git commit -m "docs: prepare deployment and portfolio case study"`.
 
-- [ ] **Step 7: Publish the project repository.** Create `Heart727/ai-business-validation-assistant` as a public GitHub repository and push the verified `main` branch with `gh repo create Heart727/ai-business-validation-assistant --public --source . --remote origin --push`. Confirm the GitHub page contains no `.env`, tokens, or customer data.
+- [ ] **Step 7: Publish the project repository.** Create `Heart727/business-validation-lab` as a public GitHub repository and push the verified `main` branch with `gh repo create Heart727/business-validation-lab --public --source . --remote origin --push`. Confirm the GitHub page contains no `.env`, tokens, or customer data.
 
 - [ ] **Step 8: Deploy the static-preview mode to Vercel.** Connect the public GitHub repository, set `DEMO_MODE=false`, deploy with `vercel.json` mapping `index.py` to `maxDuration: 60`, and verify the page and `/api/preview` open anonymously in a private window. The page must clearly label the result as static until Dify and Feishu are configured.
 

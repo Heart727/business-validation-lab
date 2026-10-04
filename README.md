@@ -2,6 +2,8 @@
 
 一个面向小微商家的 AI 经营分析演示：选取固定的虚构商家资料，经过 FastAPI → Dify Workflow/DeepSeek → 飞书多维表格，生成经营分析和 7 天可执行验证计划。
 
+项目仓库：[business-validation-lab](https://github.com/Heart727/business-validation-lab)。
+
 > **当前公开体验为静态预览。** 你可以浏览 10 份虚构样例和一份固定分析结果；实时 Dify、DeepSeek、飞书写入尚未配置，页面不会发起真实 AI 调用，也不会生成线上线索。
 
 ## 预览
