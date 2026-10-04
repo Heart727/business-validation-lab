@@ -4,7 +4,7 @@ FastAPI 将固定虚构商家资料提交给已发布的 Dify Workflow，并只�
 
 ## Workflow 输入和输出
 
-创建 Workflow，输入变量为：
+可将仓库中的 [`dify-workflow-template.yml`](dify-workflow-template.yml) 导入 Dify 工作室，创建相同结构的 Workflow。导入后仍需在 Dify 模型供应商设置中配置 DeepSeek 凭证，测试通过后再发布。输入变量为：
 
 | 变量 | 类型 | 说明 |
 | --- | --- | --- |
