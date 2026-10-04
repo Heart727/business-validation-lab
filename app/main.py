@@ -45,7 +45,7 @@ def create_app(
 
     @app.get("/api/scenarios")
     async def list_scenarios() -> list[dict[str, str]]:
-        return [{"id": item.id, "title": item.title} for item in scenarios.all()]
+        return [item.model_dump() for item in scenarios.all()]
 
     @app.get("/api/preview", response_model=AnalysisOutput)
     async def get_preview() -> AnalysisOutput:

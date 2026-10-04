@@ -78,11 +78,12 @@ function renderScenarioList() {
 function renderSelectedScenario() {
   const scenario = getSelectedScenario();
   if (!scenario) return;
-  byId("selected-industry").textContent = "固定虚构资料";
+  byId("selected-industry").textContent = scenario.industry;
   byId("selected-title").textContent = scenario.title;
-  byId("selected-goal").textContent = "场景内容由服务端的固定样例目录提供。";
-  byId("selected-metrics").textContent = "浏览器只提交样例 ID 与本次请求 ID。";
-  byId("selected-budget").textContent = "不收集客户姓名、电话、邮箱或其他个人资料。";
+  byId("selected-problem").textContent = scenario.business_problem;
+  byId("selected-metrics").textContent = scenario.current_metrics;
+  byId("selected-goal").textContent = scenario.goal;
+  byId("selected-budget").textContent = scenario.budget_range;
   byId("result-eyebrow").textContent = "虚构经营样例 · 固定资料";
 }
 

@@ -52,7 +52,7 @@ def test_health_and_scenario_list_are_public_safe(api_parts):
 
     assert health.json() == {"status": "ok", "live_demo_enabled": settings.live_demo_ready}
     assert listing.json() == [
-        {"id": scenario.id, "title": scenario.title} for scenario in scenarios.all()
+        scenario.model_dump() for scenario in scenarios.all()
     ]
     assert len(listing.json()) == 10
     assert settings.feishu_app_secret not in health.text + listing.text
