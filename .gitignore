@@ -1,6 +1,7 @@
 .worktrees/
 .venv/
 .env
+.env.local
 __pycache__/
 .pytest_cache/
 .vercel/
