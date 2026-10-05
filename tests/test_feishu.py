@@ -80,6 +80,13 @@ async def test_find_filters_by_request_id_and_handles_zero_or_one(settings, item
 
 
 @pytest.mark.asyncio
+async def test_find_accepts_feishu_empty_result_without_items(settings):
+    payload = {"code": 0, "data": {"has_more": False, "total": 0}}
+    async with mock_client(lambda request: httpx.Response(200, json=payload)) as http_client:
+        assert await FeishuClient(settings, http_client).find_by_request_id(TOKEN, REQUEST_ID) is None
+
+
+@pytest.mark.asyncio
 async def test_find_uses_encoded_filter_and_escapes_request_id(settings):
     request_id = 'id"\\end'
 
@@ -250,6 +257,7 @@ async def test_malformed_success_is_rejected(settings, scenario, method, payload
 @pytest.mark.asyncio
 @pytest.mark.parametrize("data", [
     {}, {"items": []}, {"items": {}, "has_more": False},
+    {"has_more": False}, {"has_more": False, "total": 1},
     {"items": [], "has_more": "false"},
     {"items": [None], "has_more": False},
     {"items": [{"record_id": "", "fields": {"请求ID": REQUEST_ID, "处理状态": "processing"}}], "has_more": False},

@@ -163,6 +163,8 @@ class FeishuClient:
             params={"filter": filter_value, "page_size": 2},
         ), error_code)
         items, has_more = data.get("items"), data.get("has_more")
+        if "items" not in data and type(data.get("total")) is int and data["total"] == 0 and has_more is False:
+            items = []
         if not isinstance(items, list) or type(has_more) is not bool:
             raise _invalid()
         if len(items) > 1:
