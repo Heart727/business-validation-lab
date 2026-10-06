@@ -50,4 +50,4 @@ API key 只输入 Dify 的服务端供应商配置，不要写进提示词、Wor
 3. 查看 Dify 工作空间额度和 DeepSeek 账号用量。公开样例每次真实提交都会使用外部服务额度。
 4. 将 workflow API key 加入 Vercel 的服务端环境变量，保持 `DEMO_MODE=false` 直到飞书专用表和 Vercel 限流规则也都验证完成。
 
-当前仓库未配置或调用真实 Dify/DeepSeek；自动化测试使用固定假响应。
+2026-10-05，线上公开演示已配置、发布并成功调用此 Dify Workflow 与 DeepSeek；本地 `.env.example` 仍以 `DEMO_MODE=false` 作为安全默认值。自动化测试使用固定假响应，不消耗模型额度。

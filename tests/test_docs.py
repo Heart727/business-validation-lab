@@ -22,9 +22,13 @@ def test_readme_has_reproducible_safe_local_and_public_setup():
     assert "10 份虚构" in readme
     assert "pytest" in readme
     assert "静态预览" in readme
-    assert "docs/screenshots/static-preview-desktop.png" in readme
-    assert "docs/screenshots/static-preview-mobile.png" in readme
-    assert "![静态预览" in readme
+    for screenshot in (
+        "live-demo-form.png", "live-demo-analysis.png", "live-demo-actions.png",
+        "feishu-demo-record.png",
+    ):
+        assert f"docs/screenshots/{screenshot}" in readme
+    assert "实时分析" in readme
+    assert "live_demo_enabled=true" in readme
     assert not re.search(r"(?:sk-[A-Za-z0-9]{20,}|cli_[A-Za-z0-9]{10,}|dify-[A-Za-z0-9_-]{20,})", readme)
     assert "FEISHU_APP_SECRET=" not in readme
     assert "DIFY_WORKFLOW_API_KEY=" not in readme
@@ -75,17 +79,22 @@ def test_failure_guide_documents_input_output_recovery_and_limits():
     for label in ("输入", "用户看到", "恢复", "限制"):
         assert label in failures
     assert "流程" in case_study and "验证" in case_study
-    assert "静态" in case_study
-    assert "实时 AI 已验证" not in case_study
+    assert "公开实时演示" in case_study
+    assert "10 样例验收" in case_study
     assert "feishu_auth_failed` 仅表示租户令牌获取失败" in failures
     assert "feishu_update_failed` 无法确认最终记录状态" in failures
     assert "feishu_invalid_response` 用于飞书返回内容不可解析或结构不符" in failures
-    assert "手机端截图显示静态预览标记和分析结果" in case_study
+    assert "离线模式和手机端的旧截图" in case_study
 
 
-def test_vercel_entry_and_static_screenshots_are_present():
+def test_vercel_entry_and_screenshots_are_present():
     config = json.loads(read_project_file("vercel.json"))
 
     assert config["functions"]["index.py"]["maxDuration"] == 60
     assert (ROOT / "docs/screenshots/static-preview-desktop.png").is_file()
     assert (ROOT / "docs/screenshots/static-preview-mobile.png").is_file()
+    for screenshot in (
+        "live-demo-form.png", "live-demo-analysis.png", "live-demo-actions.png",
+        "feishu-demo-record.png",
+    ):
+        assert (ROOT / "docs/screenshots" / screenshot).is_file()

@@ -4,25 +4,29 @@
 
 项目仓库：[business-validation-lab](https://github.com/Heart727/business-validation-lab)。
 
-公开演示：[经营验证工作台](https://business-validation-lab.vercel.app/)（固定虚构样例的静态预览，实时 AI 与飞书写入尚未开放）。
+公开演示：[经营验证工作台](https://business-validation-lab.vercel.app/)（无需登录，可运行实时分析）。
 
-> **当前公开体验为静态预览。** 你可以浏览 10 份虚构样例和一份固定分析结果；实时 Dify、DeepSeek、飞书写入尚未配置，页面不会发起真实 AI 调用，也不会生成线上线索。
+> **线上已接通真实流程。** 访客选择固定的虚构样例并点击「运行实时分析」，服务端调用 Dify Workflow / DeepSeek，校验结果后写入专用飞书 DEMO 表。2026-10-05 已用匿名访问完成一次提交及同一请求 ID 重试验收。外部服务的额度和可用性会影响后续运行。
 
-选择任一样例可查看其虚构经营问题、当前指标、验证目标与测试预算。固定分析结果只对应早餐配送工作室；切换其他样例时，页面会提示这份结果的来源。
+选择任一样例可查看其虚构经营问题、当前指标、验证目标与测试预算。每次实时提交根据所选样例生成结果；本地未启用实时模式时，页面仍提供仅对应早餐配送工作室的离线固定预览。
 
-## 预览
+## 截图
 
-![静态预览 - 桌面端](docs/screenshots/static-preview-desktop.png)
+![公开演示 - 选择虚构样例](docs/screenshots/live-demo-form.png)
 
-![静态预览 - 手机端](docs/screenshots/static-preview-mobile.png)
+![实时分析 - 经营摘要与观察](docs/screenshots/live-demo-analysis.png)
 
-手机端截图包含「静态预览 · 未实时执行」标记和固定分析结果。
+![实时分析 - 七天验证动作](docs/screenshots/live-demo-actions.png)
+
+![飞书演示表 - 已保存记录](docs/screenshots/feishu-demo-record.png)
+
+离线回退的桌面和手机截图保留在 [docs/screenshots](docs/screenshots/)；它们明确标记为静态预览。
 
 ## 它解决什么问题
 
 小商家常凭直觉决定要不要做促销、投广告或调整服务，却缺少一套轻量方法来记录基线、提出可验证的判断、安排下一步。这个演示把一份经营问题整理为证据、推断、缺失信息和 7 天行动，帮助使用者先跑一个小实验，再根据指标决定是否继续。
 
-项目只内置 **10 份虚构**商家资料。公开表单只传固定样例 ID 和请求 ID，不接受访客自由文本、姓名、电话或邮箱；所有未来写入的记录也必须标记为 `DEMO`。
+项目只内置 **10 份虚构**商家资料。公开表单只传固定样例 ID 和请求 ID，不接受访客自由文本、姓名、电话或邮箱；写入的记录标记为 `DEMO`。
 
 ## 主要流程
 
@@ -40,7 +44,7 @@ flowchart LR
 
 ## 本地运行
 
-需要 Python 3.12 或更新版本。无需外部账号即可打开 UI、查看静态预览并运行完整测试。
+需要 Python 3.12 或更新版本。无需外部账号即可打开 UI、查看离线静态预览并运行完整测试。
 
 ```powershell
 python -m venv .venv
@@ -78,7 +82,7 @@ node --test tests\test_observations.cjs
 
 ## 配置真实集成
 
-实时集成默认关闭。`.env.example` 只列服务端环境变量名称和安全默认值；本地凭证写在被 Git 忽略的 `.env`，线上凭证只配置在 Vercel 项目环境变量中。不要把 API key 发在聊天、截图、源码、README、浏览器代码或构建日志中。
+本地实时集成默认关闭，线上公开演示已配置并启用。`.env.example` 只列服务端环境变量名称和安全默认值；本地凭证写在被 Git 忽略的 `.env`，线上凭证只配置在 Vercel 项目环境变量中。不要把 API key 发在聊天、截图、源码、README、浏览器代码或构建日志中。
 
 DeepSeek 凭证配置在 Dify 的模型供应商设置里；Vercel 不需要 `DEEPSEEK_API_KEY`。Dify Workflow API Key 和飞书应用凭证只由 FastAPI 服务端读取。配置指南：
 
@@ -88,22 +92,22 @@ DeepSeek 凭证配置在 Dify 的模型供应商设置里；Vercel 不需要 `DE
 - [Dify Workflow 与 DeepSeek](docs/dify-workflow.md)
 - [失败场景、恢复方式与限制](docs/failure-cases.md)
 
-外部服务可能产生费用或用量消耗：DeepSeek 按账户当前价格计费，Dify 受工作空间额度和套餐限制。先检查两边的价格、配额和用量告警，再启用实时模式。
+外部服务可能产生费用或用量消耗：DeepSeek 按账户当前价格计费，Dify 受工作空间额度和套餐限制。维护线上演示时需持续检查用量；如果额度不足，应暂停实时入口。
 
-### 公开演示的启用条件
+### 公开演示的保护措施
 
-在 Vercel 上必须先确认以下条件全部满足，才将 `DEMO_MODE` 设为 `true`：
+2026-10-05 启用线上 `DEMO_MODE=true` 前，已完成以下配置：
 
 1. 飞书应用只获得本项目所需的多维表格访问权限，并写入独立演示表；表内只允许虚构样例，禁止复用真实客户数据。
 2. Dify Workflow 已发布，DeepSeek 供应商凭证仅保存在 Dify；Workflow 的 API key 保存在 Vercel 服务端环境变量。
-3. Vercel WAF 已发布限流规则，只匹配 `/api/analyze`、`/api/retry`，每个来源 IP 每 10 分钟最多 5 次。规则未发布时保持 `DEMO_MODE=false`。
-4. DeepSeek/Dify 用量与费用已检查，并设置适合账号的预算或告警。
+3. Vercel WAF 已发布限流规则，只匹配 `/api/analyze`、`/api/retry`，每个来源 IP 每 10 分钟最多 5 次。
+4. DeepSeek/Dify 用量与费用已检查。预付费余额和平台额度仍可能耗尽，需持续监测。
 
 规则可用 Vercel Hobby 的 WAF 能力配置；部署时请以账户控制台当前功能与额度为准。参见 [Vercel Firewall 使用说明](https://vercel.com/docs/vercel-firewall/vercel-waf/usage-and-pricing) 和 [Vercel Python Runtime](https://vercel.com/docs/functions/runtimes/python)。函数时限在 [vercel.json](vercel.json) 中保守设为 60 秒。
 
 ## 部署
 
-仓库根目录是 Vercel Root Directory。当前已连接 GitHub 并部署到 [正式公开地址](https://business-validation-lab.vercel.app/)；匿名请求首页、静态资源和只读 API 均返回成功，`/api/health` 显示 `live_demo_enabled=false`。网站目前只提供固定样例的静态预览，实时提交返回 `demo_disabled`。配置真实集成前，保持 `DEMO_MODE=false`。
+仓库根目录是 Vercel Root Directory。当前已连接 GitHub 并部署到 [正式公开地址](https://business-validation-lab.vercel.app/)；匿名请求首页、静态资源和只读 API 均返回成功，`/api/health` 显示 `live_demo_enabled=true`。已验收一次真实匿名分析、飞书写入和相同请求 ID 重试；这不等于长期可用性保证。本地 `.env.example` 仍保持 `DEMO_MODE=false` 作为安全默认值。
 
 Vercel Python Runtime 文档列出 Python 3.12、3.13、3.14；本地可用版本由本机环境决定。
 
@@ -111,8 +115,8 @@ Vercel Python Runtime 文档列出 Python 3.12、3.13、3.14；本地可用版�
 
 Python、FastAPI、Pydantic、HTTPX、原生 HTML/CSS/JavaScript、Dify Workflow、DeepSeek、飞书多维表格、Vercel Functions、pytest。
 
-> 应用本身没有自建 SQLite 持久层；演示记录目标是单独的飞书多维表格。实时服务配置前，提交接口关闭。
+> 应用本身没有自建 SQLite 持久层；演示记录保存在单独的飞书多维表格。关闭实时模式时，提交接口返回 `demo_disabled`。
 
 ## 项目案例
 
-两分钟项目介绍、实现范围和已验证内容见 [docs/case-study.md](docs/case-study.md)。公开代码和静态截图只证明离线 UI、数据校验及假服务流程；它们**不证明线上 DeepSeek 调用或真实飞书写入已经完成**。
+两分钟项目介绍、实现范围和已验证内容见 [docs/case-study.md](docs/case-study.md)。案例页明确区分一次真实线上验收与 10 份样例的本地模拟测试。
